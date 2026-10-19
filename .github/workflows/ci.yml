@@ -1,0 +1,39 @@
+name: HTTP API Tests
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Start API and wait
+        run: |
+          python -u http_identity_lab.py > api.log 2>&1 &
+
+          for i in {1..15}; do
+            status=$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:18080/documents/42 || true)
+
+            if [ "$status" = "401" ]; then
+              echo "API is ready"
+              exit 0
+            fi
+
+            sleep 1
+          done
+
+          cat api.log
+          exit 1
+
+      - name: Run HTTP tests
+        run: python -m unittest -v test_document_http
