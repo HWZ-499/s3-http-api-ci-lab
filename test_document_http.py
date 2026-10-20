@@ -1,3 +1,4 @@
+import os
 import unittest
 from http.client import HTTPConnection
 
@@ -7,7 +8,11 @@ def request_status(token, document_id):
 
     if token is not None:
         headers["Authorization"] = f"Bearer {token}"
-    conn = HTTPConnection("127.0.0.1", 18080, timeout=3)
+    conn = HTTPConnection(
+        "127.0.0.1",
+        int(os.getenv("API_PORT", "18080")),
+        timeout=3
+    )
 
     try:
         conn.request(
@@ -15,6 +20,7 @@ def request_status(token, document_id):
             f"/documents/{document_id}",
             headers=headers
         )
+
 
         response = conn.getresponse()
         return response.status
