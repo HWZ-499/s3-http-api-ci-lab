@@ -59,6 +59,8 @@ jobs:
           exit 1
 
       - name: Run HTTP tests
+        env:
+          API_PORT: "18081"
         run: python -m unittest -v test_document_http
       
       - name: Diagnose failure
