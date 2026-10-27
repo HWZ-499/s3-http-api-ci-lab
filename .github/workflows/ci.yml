@@ -60,3 +60,9 @@ jobs:
 
       - name: Run HTTP tests
         run: python -m unittest -v test_document_http
+      
+      - name: Diagnose failure
+        if: ${{ failure() }}
+        run: |
+          docker compose ps -a
+          docker compose logs --no-color --tail=100 api
