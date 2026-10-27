@@ -3,6 +3,8 @@ name: HTTP API Tests
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
   test:
